@@ -1,25 +1,26 @@
 import sqlite3
 import os
-import json
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
-# ---------------- DB CONFIG ----------------
+# ---------------- INIT APP ----------------
+app = Flask(__name__)
+CORS(app)
 
+# ---------------- DB PATH (FIXED FOR DEPLOYMENT) ----------------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "data/db/ufo_sightings.db")
 
+
+# ---------------- DB CONNECTION ----------------
 def _get_db():
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
-    conn.execute("PRAGMA journal_mode=WAL")
-    conn.execute("PRAGMA foreign_keys=ON")
     return conn
 
 
 # ---------------- CORE FUNCTIONS ----------------
-
-def get_sightings(filters: dict = None, limit: int = 1000):
+def get_sightings(filters=None, limit=1000):
     conn = _get_db()
     try:
         query = "SELECT * FROM sightings WHERE 1=1"
@@ -29,15 +30,19 @@ def get_sightings(filters: dict = None, limit: int = 1000):
             if filters.get("year"):
                 query += " AND year = ?"
                 params.append(filters["year"])
+
             if filters.get("month"):
                 query += " AND month = ?"
                 params.append(filters["month"])
+
             if filters.get("shape"):
                 query += " AND shape = ?"
                 params.append(filters["shape"])
+
             if filters.get("country"):
                 query += " AND country = ?"
                 params.append(filters["country"])
+
             if filters.get("state"):
                 query += " AND state = ?"
                 params.append(filters["state"])
@@ -84,14 +89,18 @@ def get_stats():
 
         top_shape = conn.execute("""
             SELECT shape FROM sightings 
-            WHERE shape IS NOT NULL AND shape != '' 
-            GROUP BY shape ORDER BY COUNT(*) DESC LIMIT 1
+            WHERE shape IS NOT NULL AND shape != ''
+            GROUP BY shape 
+            ORDER BY COUNT(*) DESC 
+            LIMIT 1
         """).fetchone()
 
         top_country = conn.execute("""
             SELECT country FROM sightings 
-            WHERE country IS NOT NULL AND country != '' 
-            GROUP BY country ORDER BY COUNT(*) DESC LIMIT 1
+            WHERE country IS NOT NULL AND country != ''
+            GROUP BY country 
+            ORDER BY COUNT(*) DESC 
+            LIMIT 1
         """).fetchone()
 
         return {
@@ -104,11 +113,7 @@ def get_stats():
         conn.close()
 
 
-# ---------------- API LAYER (THIS WAS MISSING) ----------------
-
-app = Flask(__name__)
-CORS(app)
-
+# ---------------- RPC ROUTE (THIS IS THE BRAIN) ----------------
 @app.route("/", methods=["POST"])
 def rpc():
     data = request.get_json()
@@ -133,6 +138,5 @@ def rpc():
 
 
 # ---------------- RUN SERVER ----------------
-
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
