@@ -1,0 +1,46 @@
+[2026-04-26T18:57:35.865994] SUCCESS: Function get_filter_options completed.
+[2026-04-26T18:58:01.552516] [manual_2329790] [BACKEND] [BACKEND_START] get_filter_options
+[2026-04-26T18:58:01.807055] [manual_2329790] [BACKEND] [BACKEND_SUCCESS] get_filter_options returned 87 years, 29 shapes, 5 countries
+[2026-04-26T18:58:02.203305] [manual_2329790] [BACKEND] [BACKEND_START] get_sightings with filters={'shape': 'changing'}, limit=1000
+[2026-04-26T18:58:02.207297] [manual_2329790] [BACKEND] [BACKEND_STEP] Executing query: SELECT * FROM sightings WHERE 1=1 AND shape = ? ORDER BY datetime_parsed DESC LIMIT ? with params ['changing', 1000]
+[2026-04-26T18:58:02.213781] [manual_2329790] [BACKEND] [BACKEND_START] get_stats
+[2026-04-26T18:58:02.324221] [manual_2329790] [BACKEND] [BACKEND_SUCCESS] get_sightings returned 1000 records
+[2026-04-26T18:58:02.011015] SUCCESS: Function get_filter_options completed.
+[2026-04-26T18:58:02.737336] [manual_2329790] [BACKEND] [BACKEND_SUCCESS] get_stats: {'total_sightings': 80331, 'top_shape': 'light', 'top_country': 'us'}
+[2026-04-26T18:58:02.807751] SUCCESS: Function get_sightings completed. args={"filters": {"shape": "changing"}, "limit": 1000}
+[2026-04-26T18:58:02.923947] SUCCESS: Function get_stats completed.
+[2026-04-26T18:58:09.897137] [manual_2329790] [BACKEND] [BACKEND_START] get_sightings with filters={'shape': 'changing', 'country': 'ca'}, limit=1000
+[2026-04-26T18:58:09.899223] [manual_2329790] [BACKEND] [BACKEND_STEP] Executing query: SELECT * FROM sightings WHERE 1=1 AND shape = ? AND country = ? ORDER BY datetime_parsed DESC LIMIT ? with params ['changing', 'ca', 1000]
+[2026-04-26T18:58:10.000067] [manual_2329790] [BACKEND] [BACKEND_SUCCESS] get_sightings returned 69 records
+[2026-04-26T18:58:10.203582] [manual_2329790] [BACKEND] [BACKEND_START] get_filter_options
+[2026-04-26T18:58:10.231236] [manual_2329790] [BACKEND] [BACKEND_START] get_stats
+[2026-04-26T18:58:10.698964] [manual_2329790] [BACKEND] [BACKEND_SUCCESS] get_filter_options returned 87 years, 29 shapes, 5 countries
+[2026-04-26T18:58:10.794181] [manual_2329790] [BACKEND] [BACKEND_SUCCESS] get_stats: {'total_sightings': 80331, 'top_shape': 'light', 'top_country': 'us'}
+[2026-04-26T18:58:10.217471] SUCCESS: Function get_sightings completed. args={"filters": {"shape": "changing", "country": "ca"}, "limit": 1000}
+[2026-04-26T18:58:11.050077] SUCCESS: Function get_stats completed.
+[2026-04-26T18:58:11.047783] SUCCESS: Function get_filter_options completed.
+[2026-04-26T18:58:36.519173] [manual_2329790] [BACKEND] [BACKEND_START] get_stats
+[2026-04-26T18:58:36.591829] [manual_2329790] [BACKEND] [BACKEND_START] get_filter_options
+[2026-04-26T18:58:36.999881] [manual_2329790] [BACKEND] [BACKEND_START] get_sightings with filters={'shape': 'changing', 'country': 'gb'}, limit=1000
+[2026-04-26T18:58:37.001102] [manual_2329790] [BACKEND] [BACKEND_STEP] Executing query: SELECT * FROM sightings WHERE 1=1 AND shape = ? AND country = ? ORDER BY datetime_parsed DESC LIMIT ? with params ['changing', 'gb', 1000]
+[2026-04-26T18:58:37.101596] [manual_2329790] [BACKEND] [BACKEND_SUCCESS] get_sightings returned 46 records
+[2026-04-26T18:58:37.102893] [manual_2329790] [BACKEND] [BACKEND_SUCCESS] get_stats: {'total_sightings': 80331, 'top_shape': 'light', 'top_country': 'us'}
+[2026-04-26T18:58:37.108569] [manual_2329790] [BACKEND] [BACKEND_SUCCESS] get_filter_options returned 87 years, 29 shapes, 5 countries
+[2026-04-26T18:58:37.430825] SUCCESS: Function get_stats completed.
+[2026-04-26T18:58:37.427588] SUCCESS: Function get_sightings completed. args={"filters": {"shape": "changing", "country": "gb"}, "limit": 1000}
+[2026-04-26T18:58:49.910779] [manual_2329865] [BACKEND] [BACKEND_START] get_filter_options
+[2026-04-26T18:58:49.928567] [manual_2329865] [BACKEND] [BACKEND_START] get_sightings with filters={}, limit=1000
+[2026-04-26T18:58:49.929436] [manual_2329865] [BACKEND] [BACKEND_STEP] Executing query: SELECT * FROM sightings WHERE 1=1 ORDER BY datetime_parsed DESC LIMIT ? with params [1000]
+[2026-04-26T18:58:50.205268] [manual_2329865] [BACKEND] [BACKEND_SUCCESS] get_sightings returned 1000 records
+[2026-04-26T18:58:50.420926] [manual_2329865] [BACKEND] [BACKEND_SUCCESS] get_filter_options returned 87 years, 29 shapes, 5 countries
+[2026-04-26T18:58:50.523387] [manual_2329865] [BACKEND] [BACKEND_START] get_stats
+[2026-04-26T18:58:51.086820] [manual_2329865] [BACKEND] [BACKEND_SUCCESS] get_stats: {'total_sightings': 80331, 'top_shape': 'light', 'top_country': 'us'}
+[2026-04-26T18:58:50.645346] SUCCESS: Function get_filter_options completed.
+[2026-04-26T18:58:51.239649] SUCCESS: Function get_stats completed.
+[2026-04-26T18:58:57.599505] [run_1777228964_oc4j] [BACKEND] [BACKEND_START] get_stats
+[2026-04-26T18:58:57.694259] [run_1777228964_oc4j] [BACKEND] [BACKEND_START] get_filter_options
+[2026-04-26T18:58:57.694535] [run_1777228964_oc4j] [BACKEND] [BACKEND_START] get_sightings with filters={}, limit=1000
+[2026-04-26T18:58:57.695347] [run_1777228964_oc4j] [BACKEND] [BACKEND_STEP] Executing query: SELECT * FROM sightings WHERE 1=1 ORDER BY datetime_parsed DESC LIMIT ? with params [1000]
+[2026-04-26T18:58:57.998453] [run_1777228964_oc4j] [BACKEND] [BACKEND_SUCCESS] get_sightings returned 1000 records
+[2026-04-26T18:58:58.091614] [run_1777228964_oc4j] [BACKEND] [BACKEND_SUCCESS] get_stats: {'total_sightings': 80331, 'top_shape': 'light', 'top_country': 'us'}
+[2026-04-26T18:58:58.326192] [run_1777228964_oc4j] [BACKEND] [BACKEND_SUCCESS] get_filter_options returned 87 years, 29 shapes, 5 countries

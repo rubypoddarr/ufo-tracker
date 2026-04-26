@@ -1,0 +1,163 @@
+{
+  "react_icons": [
+    {
+      "brand": "NASA",
+      "export_name": "SiNasa",
+      "usage": "partner_chip",
+      "reason": "Official NASA logo from Simple Icons"
+    },
+    {
+      "brand": "SpaceX",
+      "export_name": "SiSpacex",
+      "usage": "partner_chip",
+      "reason": "Official SpaceX logo from Simple Icons"
+    }
+  ],
+  "downloaded_assets": [
+    {
+      "id": "hero-night-sky-1",
+      "kind": "photo",
+      "filename": "hero-night-sky-1.jpg",
+      "title": "Mysterious Forest Light",
+      "description": "A cinematic shot of a lone light source in a foggy forest at night",
+      "visual_description": "A dark, atmospheric forest scene at night with thick fog. A bright, cool-toned light source (flashlight or mysterious orb) glows from the ground, casting long shadows of bare trees. A lone silhouette stands near the light.",
+      "color_notes": "Dominant deep greens, blacks, and a sharp blue-white glow. High contrast, perfect for dark mode.",
+      "mood": "mysterious, cinematic, eerie",
+      "placement": "hero",
+      "recommended": true,
+      "alt_text": "Lone figure near a mysterious glowing light in a foggy night forest",
+      "dimensions": "1200x400",
+      "source_page_url": "https://www.pexels.com/photo/person-shining-light-from-flashlight-at-trees-19949819/",
+      "download_url": "https://images.pexels.com/photos/19949819/pexels-photo-19949819.jpeg?auto=compress&cs=tinysrgb&w=1200&h=400&fit=crop",
+      "provider": "Pexels",
+      "photographer": "Jaroslav Maler",
+      "avg_color": "#19261F",
+      "verified_via": "file_size_check_only",
+      "why_it_was_chosen": "Perfectly matches the mysterious forest silhouette request. The fog and localized light source create a professional, non-cheesy paranormal vibe."
+    },
+    {
+      "id": "hero-night-sky-2",
+      "kind": "photo",
+      "filename": "hero-night-sky-2.jpg",
+      "title": "Desert Silhouette with Glow",
+      "description": "Futuristic silhouette under a starry night sky",
+      "visual_description": "A silhouette of a person wearing a glowing mask or device in a vast, dark desert. Above them, a dense field of stars and subtle nebulosity fills the sky.",
+      "color_notes": "Deep charcoal and navy tones with subtle amber and violet in the star field. Cool cyan glow from the mask.",
+      "mood": "futuristic, mysterious, technical",
+      "placement": "hero",
+      "recommended": false,
+      "alt_text": "Silhouette under a vast starry sky in the desert",
+      "dimensions": "1200x400",
+      "source_page_url": "https://www.pexels.com/photo/futuristic-silhouette-at-night-in-algerian-desert-31576476/",
+      "download_url": "https://images.pexels.com/photos/31576476/pexels-photo-31576476.jpeg?auto=compress&cs=tinysrgb&w=1200&h=400&fit=crop",
+      "provider": "Pexels",
+      "photographer": "Houssam benamara",
+      "avg_color": "#353D48",
+      "verified_via": "file_size_check_only",
+      "why_it_was_chosen": "Strong technical/futuristic vibe that avoids alien cliches while maintaining a mysterious atmosphere."
+    },
+    {
+      "id": "bg-star-field",
+      "kind": "photo",
+      "filename": "bg-star-field.jpg",
+      "title": "Dense Star Field",
+      "description": "Subtle star field for application background",
+      "visual_description": "A high-resolution, dense field of distant stars against a pure black and deep teal sky. No prominent landscape features, just a vast cosmic expanse.",
+      "color_notes": "Deep teal-black background with tiny white and soft blue star points.",
+      "mood": "expansive, professional, technical",
+      "placement": "background",
+      "recommended": true,
+      "alt_text": "Detailed starry night sky background",
+      "dimensions": "1200x800",
+      "source_page_url": "https://www.pexels.com/photo/stars-in-the-night-sky-13067022/",
+      "download_url": "https://images.pexels.com/photos/13067022/pexels-photo-13067022.jpeg?auto=compress&cs=tinysrgb&w=1200&h=800&fit=crop",
+      "provider": "Pexels",
+      "photographer": "Song Song",
+      "avg_color": "#041D22",
+      "verified_via": "file_size_check_only",
+      "why_it_was_chosen": "Clean and professional star field that works as a subtle background layer in dark mode."
+    },
+    {
+      "id": "card-mysterious-lights-1",
+      "kind": "photo",
+      "filename": "card-mysterious-lights-1.jpg",
+      "title": "Distant Horizon Lights",
+      "description": "Eerie lights on a dark horizon line",
+      "visual_description": "A minimal shot of a dark landscape at night. A thin line of distant city or mysterious lights glows on the horizon under a clear, starry sky.",
+      "color_notes": "Near-black silhouette with warm amber points on the horizon.",
+      "mood": "quiet, mysterious, observational",
+      "placement": "card_media",
+      "recommended": true,
+      "alt_text": "Distant lights on a dark horizon under a starry sky",
+      "dimensions": "600x400",
+      "source_page_url": "https://www.pexels.com/photo/clear-dark-sky-11394/",
+      "download_url": "https://images.pexels.com/photos/11394/pexels-photo-11394.jpeg?auto=compress&cs=tinysrgb&w=600&h=400&fit=crop",
+      "provider": "Pexels",
+      "photographer": "Ikowh Babayev",
+      "avg_color": "#21201B",
+      "verified_via": "file_size_check_only",
+      "why_it_was_chosen": "Perfectly captures the 'distant lights' sightings often reported in UFO tracking."
+    },
+    {
+      "id": "icon-nasa",
+      "kind": "downloaded_logo",
+      "filename": "icon-nasa.svg",
+      "title": "NASA Logo",
+      "description": "Official NASA logo (SVG)",
+      "visual_description": "Red NASA 'worm' or meatball style vector mark",
+      "color_notes": "Red (#E03C31) vector",
+      "mood": "technical, professional",
+      "placement": "partner_row",
+      "recommended": true,
+      "alt_text": "NASA logo",
+      "dimensions": "intrinsic",
+      "source_page_url": "https://simpleicons.org/?q=nasa",
+      "download_url": "https://cdn.simpleicons.org/nasa",
+      "provider": "Simple Icons",
+      "verified_via": "official_source_plus_svg_header",
+      "why_it_was_chosen": "Crisp SVG logo for high-quality technical presentation."
+    },
+    {
+      "id": "logo-seti",
+      "kind": "downloaded_logo",
+      "filename": "logo-seti.png",
+      "title": "SETI Institute Logo",
+      "description": "Official SETI logo for dark backgrounds",
+      "visual_description": "SETI Institute wordmark and graphic logo",
+      "color_notes": "Optimized for dark backgrounds",
+      "mood": "professional, scientific",
+      "placement": "partner_row",
+      "recommended": true,
+      "alt_text": "SETI Institute logo",
+      "dimensions": "200x200 (approx)",
+      "provider": "get_logos tool",
+      "verified_via": "file_size_check_only",
+      "why_it_was_chosen": "Official source logo from get_logos."
+    }
+  ],
+  "missing_assets": [
+    {
+      "requested_asset": "UFO Icon",
+      "reason": "Could not find a high-quality professional UFO SVG that wasn't 'cheesy' or cartoonish. Recommended to use a neutral technical icon from react-icons/si (like SiRadar or SiSatellite) or a simple geometric craft silhouette if custom SVG is added later."
+    }
+  ],
+  "css_textures": [
+    {
+      "class_name": "bg-dot-grid",
+      "placement": "hero_background",
+      "description": "Technical dot grid overlay for data-centric sections",
+      "recommended_for": "Layering over the star-field or dark backgrounds to add a radar/technical feel"
+    },
+    {
+      "class_name": "bg-noise",
+      "placement": "page_wash",
+      "description": "Subtle noise texture to reduce banding on dark gradients",
+      "recommended_for": "Global background overlay"
+    }
+  ],
+  "usage_notes": [
+    "Use 'bg-star-field.jpg' as a fixed background with low opacity (0.3-0.5) to keep text readable.",
+    "The hero photos have high contrast; use light text with a subtle text-shadow for better legibility.",
+    "For the UFO icon, consider using SiRadar or SiTrackers from react-icons as a professional alternative to a 'flying saucer' icon."
+  ]
+}
