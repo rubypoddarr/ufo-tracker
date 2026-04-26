@@ -64,7 +64,9 @@
 ### 🎥 SYSTEM RECORDING (LIVE SIMULATION)
 
 👉 Full Operational Simulation:
-![https://github.com/rubypoddarr/ufo-tracker/blob/main/Recordings/Recording%202026-04-27%20020837%20(1).gif?raw=true]
+<p align="center">
+  <img src="https://github.com/rubypoddarr/ufo-tracker/raw/main/Recordings/Recording%202026-04-27%20020837%20(1).gif" width="100%" alt="UFO Tracker Demo">
+</p>
 
 ---
 
