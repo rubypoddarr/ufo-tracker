@@ -4,11 +4,11 @@ type AppConfig = {
   runId: string;
 };
 
-// ✅ FIXED: no more undefined config
+// ✅ stable config
 function getConfig(): AppConfig {
   return {
     appName: "ufo_tracker",
-    dataEndpoint: "https://ufo-tracker-9alh.onrender.com", // your backend URL
+    dataEndpoint: "https://ufo-tracker-9alh.onrender.com/api", // MUST include /api
     runId: ""
   };
 }
@@ -16,43 +16,39 @@ function getConfig(): AppConfig {
 type RpcParams = {
   func: string;
   args?: Record<string, any>;
-  module?: string;
 };
 
 function getUserFacingErrorMessage(status: number): string {
-  if (status === 401) return "Authentication required. Please sign in again.";
-  if (status === 403) return "You do not have access to this app workspace.";
-  if (status === 404) return "Requested app resource was not found.";
-  if (status >= 500) return "Server error while loading app data. Please try again.";
-  return "Request failed. Please try again.";
+  if (status === 401) return "Auth required.";
+  if (status === 403) return "No access.";
+  if (status === 404) return "Not found.";
+  if (status >= 500) return "Server error.";
+  return "Request failed.";
 }
 
-function cacheKey(func: string, args: Record<string, any>, module: string): string {
-  return `rpc:${module}:${func}:${JSON.stringify(args)}`;
+// cache key
+function cacheKey(func: string, args: any): string {
+  return `rpc:${func}:${JSON.stringify(args)}`;
 }
 
 function getCached<T>(key: string): T | undefined {
   try {
     const raw = sessionStorage.getItem(key);
-    if (!raw) return undefined;
-    return JSON.parse(raw) as T;
+    return raw ? JSON.parse(raw) : undefined;
   } catch {
     return undefined;
   }
 }
 
-function setCache(key: string, data: unknown): void {
+function setCache(key: string, value: any) {
   try {
-    sessionStorage.setItem(key, JSON.stringify(data));
-  } catch {
-    // ignore
-  }
+    sessionStorage.setItem(key, JSON.stringify(value));
+  } catch {}
 }
 
-// ✅ FIXED: stable fetch
+// 🔥 CORE FETCH (MATCHES FLASK BACKEND)
 async function fetchRpc<T>(
   config: AppConfig,
-  resolvedModule: string,
   func: string,
   args: Record<string, any>
 ): Promise<T> {
@@ -60,11 +56,9 @@ async function fetchRpc<T>(
   const res = await fetch(config.dataEndpoint, {
     method: "POST",
     headers: {
-      "Content-Type": "application/json",
-      "X-Run-Id": config.runId || ""
+      "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      module: resolvedModule,
       func,
       args
     })
@@ -73,57 +67,32 @@ async function fetchRpc<T>(
   const raw = await res.text();
 
   if (!res.ok) {
-    console.error("[FETCH_ERROR]", raw);
     throw new Error(getUserFacingErrorMessage(res.status));
   }
 
-  try {
-    return JSON.parse(raw) as T;
-  } catch {
-    console.error("[PARSE_ERROR]", raw);
-    throw new Error("Invalid JSON response from backend");
-  }
+  return JSON.parse(raw);
 }
 
-/**
- * Clear cached query results
- */
-export function invalidateCache(funcNames?: string[]): void {
-  const keysToRemove: string[] = [];
-
-  for (let i = 0; i < sessionStorage.length; i++) {
-    const key = sessionStorage.key(i);
-    if (key && key.startsWith("rpc:")) {
-      if (!funcNames || funcNames.some((fn) => key.includes(`:${fn}:`))) {
-        keysToRemove.push(key);
-      }
-    }
-  }
-
-  keysToRemove.forEach((k) => sessionStorage.removeItem(k));
-}
-
+// 🚀 MAIN RPC CALL
 export async function rpcCall<T = any>({
   func,
-  args = {},
-  module
+  args = {}
 }: RpcParams): Promise<T> {
 
   const config = getConfig();
-  const resolvedModule = module || `apps.${config.appName}.backend.main`;
-  const key = cacheKey(func, args, resolvedModule);
+  const key = cacheKey(func, args);
 
   const cached = getCached<T>(key);
 
-  if (cached !== undefined) {
+  if (cached) {
     // background refresh
-    fetchRpc<T>(config, resolvedModule, func, args)
+    fetchRpc<T>(config, func, args)
       .then((fresh) => setCache(key, fresh))
       .catch(() => {});
     return cached;
   }
 
-  const data = await fetchRpc<T>(config, resolvedModule, func, args);
+  const data = await fetchRpc<T>(config, func, args);
   setCache(key, data);
   return data;
 }
