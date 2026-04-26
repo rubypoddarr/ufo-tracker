@@ -1,28 +1,30 @@
 import sqlite3
 import os
 import json
+from flask import Flask, request, jsonify
+from flask_cors import CORS
 
-DB_PATH = "apps/ufo_tracker/backend/data/db/ufo_sightings.db"
+# ---------------- DB CONFIG ----------------
+
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+DB_PATH = os.path.join(BASE_DIR, "data/db/ufo_sightings.db")
 
 def _get_db():
-    """Open a connection with recommended settings."""
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     conn.execute("PRAGMA journal_mode=WAL")
     conn.execute("PRAGMA foreign_keys=ON")
     return conn
 
+
+# ---------------- CORE FUNCTIONS ----------------
+
 def get_sightings(filters: dict = None, limit: int = 1000):
-    """
-    Retrieve filtered sightings for the map and list.
-    Filters can include: year, month, shape, country, state.
-    """
-    print(f"[BACKEND_START] get_sightings with filters={filters}, limit={limit}")
     conn = _get_db()
     try:
         query = "SELECT * FROM sightings WHERE 1=1"
         params = []
-        
+
         if filters:
             if filters.get("year"):
                 query += " AND year = ?"
@@ -39,80 +41,98 @@ def get_sightings(filters: dict = None, limit: int = 1000):
             if filters.get("state"):
                 query += " AND state = ?"
                 params.append(filters["state"])
-        
+
         query += " ORDER BY datetime_parsed DESC LIMIT ?"
         params.append(limit)
-        
-        print(f"[BACKEND_STEP] Executing query: {query} with params {params}")
+
         rows = conn.execute(query, params).fetchall()
-        result = [dict(r) for r in rows]
-        print(f"[BACKEND_SUCCESS] get_sightings returned {len(result)} records")
-        return result
-    except Exception as e:
-        print(f"[BACKEND_ERROR] get_sightings failed: {type(e).__name__}: {str(e)}")
-        raise
+        return [dict(r) for r in rows]
+
     finally:
         conn.close()
 
+
 def get_filter_options():
-    """
-    Get unique values for filters (years, shapes, countries).
-    """
-    print("[BACKEND_START] get_filter_options")
     conn = _get_db()
     try:
-        # Get years
-        years_rows = conn.execute("SELECT DISTINCT year FROM sightings WHERE year IS NOT NULL ORDER BY year DESC").fetchall()
-        years = [r["year"] for r in years_rows]
-        
-        # Get shapes
-        shapes_rows = conn.execute("SELECT DISTINCT shape FROM sightings WHERE shape IS NOT NULL AND shape != '' ORDER BY shape").fetchall()
-        shapes = [r["shape"] for r in shapes_rows]
-        
-        # Get countries
-        countries_rows = conn.execute("SELECT DISTINCT country FROM sightings WHERE country IS NOT NULL AND country != '' ORDER BY country").fetchall()
-        countries = [r["country"] for r in countries_rows]
-        
-        result = {
+        years = [r["year"] for r in conn.execute(
+            "SELECT DISTINCT year FROM sightings WHERE year IS NOT NULL ORDER BY year DESC"
+        ).fetchall()]
+
+        shapes = [r["shape"] for r in conn.execute(
+            "SELECT DISTINCT shape FROM sightings WHERE shape IS NOT NULL AND shape != '' ORDER BY shape"
+        ).fetchall()]
+
+        countries = [r["country"] for r in conn.execute(
+            "SELECT DISTINCT country FROM sightings WHERE country IS NOT NULL AND country != '' ORDER BY country"
+        ).fetchall()]
+
+        return {
             "years": years,
             "shapes": shapes,
             "countries": countries
         }
-        print(f"[BACKEND_SUCCESS] get_filter_options returned {len(years)} years, {len(shapes)} shapes, {len(countries)} countries")
-        return result
-    except Exception as e:
-        print(f"[BACKEND_ERROR] get_filter_options failed: {type(e).__name__}: {str(e)}")
-        raise
+
     finally:
         conn.close()
 
+
 def get_stats():
-    """
-    Summary stats for the dashboard.
-    """
-    print("[BACKEND_START] get_stats")
     conn = _get_db()
     try:
-        # Total sightings
-        total_sightings = conn.execute("SELECT COUNT(*) FROM sightings").fetchone()[0]
-        
-        # Top shape
-        top_shape_row = conn.execute("SELECT shape, COUNT(*) as cnt FROM sightings WHERE shape IS NOT NULL AND shape != '' GROUP BY shape ORDER BY cnt DESC LIMIT 1").fetchone()
-        top_shape = top_shape_row["shape"] if top_shape_row else "Unknown"
-        
-        # Top country
-        top_country_row = conn.execute("SELECT country, COUNT(*) as cnt FROM sightings WHERE country IS NOT NULL AND country != '' GROUP BY country ORDER BY cnt DESC LIMIT 1").fetchone()
-        top_country = top_country_row["country"] if top_country_row else "Unknown"
-        
-        result = {
-            "total_sightings": total_sightings,
-            "top_shape": top_shape,
-            "top_country": top_country
+        total = conn.execute("SELECT COUNT(*) FROM sightings").fetchone()[0]
+
+        top_shape = conn.execute("""
+            SELECT shape FROM sightings 
+            WHERE shape IS NOT NULL AND shape != '' 
+            GROUP BY shape ORDER BY COUNT(*) DESC LIMIT 1
+        """).fetchone()
+
+        top_country = conn.execute("""
+            SELECT country FROM sightings 
+            WHERE country IS NOT NULL AND country != '' 
+            GROUP BY country ORDER BY COUNT(*) DESC LIMIT 1
+        """).fetchone()
+
+        return {
+            "total_sightings": total,
+            "top_shape": top_shape["shape"] if top_shape else "Unknown",
+            "top_country": top_country["country"] if top_country else "Unknown"
         }
-        print(f"[BACKEND_SUCCESS] get_stats: {result}")
-        return result
-    except Exception as e:
-        print(f"[BACKEND_ERROR] get_stats failed: {type(e).__name__}: {str(e)}")
-        raise
+
     finally:
         conn.close()
+
+
+# ---------------- API LAYER (THIS WAS MISSING) ----------------
+
+app = Flask(__name__)
+CORS(app)
+
+@app.route("/", methods=["POST"])
+def rpc():
+    data = request.get_json()
+
+    func = data.get("func")
+    args = data.get("args", {})
+
+    try:
+        if func == "get_sightings":
+            return jsonify(get_sightings(args))
+
+        if func == "get_filter_options":
+            return jsonify(get_filter_options())
+
+        if func == "get_stats":
+            return jsonify(get_stats())
+
+        return jsonify({"error": "Unknown function"}), 400
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+# ---------------- RUN SERVER ----------------
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=10000)
