@@ -4,8 +4,13 @@ type AppConfig = {
   runId: string;
 };
 
+// ✅ FIXED: no more undefined config
 function getConfig(): AppConfig {
-  return (window as any).__APP_CONFIG__;
+  return {
+    appName: "ufo_tracker",
+    dataEndpoint: "https://ufo-tracker-9alh.onrender.com", // your backend URL
+    runId: ""
+  };
 }
 
 type RpcParams = {
@@ -40,50 +45,52 @@ function setCache(key: string, data: unknown): void {
   try {
     sessionStorage.setItem(key, JSON.stringify(data));
   } catch {
-    // Storage full or unavailable — ignore
+    // ignore
   }
 }
 
-async function fetchRpc<T>(config: AppConfig, resolvedModule: string, func: string, args: Record<string, any>): Promise<T> {
+// ✅ FIXED: stable fetch
+async function fetchRpc<T>(
+  config: AppConfig,
+  resolvedModule: string,
+  func: string,
+  args: Record<string, any>
+): Promise<T> {
+
   const res = await fetch(config.dataEndpoint, {
     method: "POST",
-    headers: { "Content-Type": "application/json", "X-Run-Id": config.runId || "" },
-    body: JSON.stringify({ module: resolvedModule, func, args }),
-    credentials: "include",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Run-Id": config.runId || ""
+    },
+    body: JSON.stringify({
+      module: resolvedModule,
+      func,
+      args
+    })
   });
 
-  const contentType = res.headers.get("content-type") || "";
-  console.log("[FETCH_RESPONSE]", { status: res.status, contentType });
-
   const raw = await res.text();
+
   if (!res.ok) {
-    console.error("[FETCH_ERROR]", raw.slice(0, 200));
+    console.error("[FETCH_ERROR]", raw);
     throw new Error(getUserFacingErrorMessage(res.status));
   }
 
-  if (!contentType.includes("application/json")) {
-    console.error("[PARSE_ERROR]", `Unexpected content-type: ${contentType}`);
-    console.log("[PARSE_ERROR_PREVIEW]", raw.slice(0, 200));
-    throw new Error(`Expected JSON response, got '${contentType || "unknown"}'`);
-  }
-
   try {
-    const data = JSON.parse(raw);
-    console.log("[PARSE_SUCCESS]", { keys: Object.keys(data ?? {}) });
-    return data as T;
-  } catch (err) {
-    console.error("[PARSE_ERROR]", err);
-    console.log("[PARSE_ERROR_PREVIEW]", raw.slice(0, 200));
-    throw err;
+    return JSON.parse(raw) as T;
+  } catch {
+    console.error("[PARSE_ERROR]", raw);
+    throw new Error("Invalid JSON response from backend");
   }
 }
 
 /**
- * Clear cached query results. Call after mutations to prevent stale data.
- * @param funcNames - Specific function names to invalidate (e.g., ['get_items', 'get_stats']). Omit to clear all.
+ * Clear cached query results
  */
 export function invalidateCache(funcNames?: string[]): void {
   const keysToRemove: string[] = [];
+
   for (let i = 0; i < sessionStorage.length; i++) {
     const key = sessionStorage.key(i);
     if (key && key.startsWith("rpc:")) {
@@ -92,26 +99,30 @@ export function invalidateCache(funcNames?: string[]): void {
       }
     }
   }
+
   keysToRemove.forEach((k) => sessionStorage.removeItem(k));
-  console.log("[CACHE_INVALIDATE]", { funcs: funcNames || "*", cleared: keysToRemove.length });
 }
 
-export async function rpcCall<T = any>({ func, args = {}, module }: RpcParams): Promise<T> {
+export async function rpcCall<T = any>({
+  func,
+  args = {},
+  module
+}: RpcParams): Promise<T> {
+
   const config = getConfig();
   const resolvedModule = module || `apps.${config.appName}.backend.main`;
   const key = cacheKey(func, args, resolvedModule);
 
   const cached = getCached<T>(key);
+
   if (cached !== undefined) {
-    console.log("[CACHE_HIT]", { func, module: resolvedModule });
-    // Return cached data immediately, refresh in background
+    // background refresh
     fetchRpc<T>(config, resolvedModule, func, args)
       .then((fresh) => setCache(key, fresh))
       .catch(() => {});
     return cached;
   }
 
-  console.log("[FETCH_START]", { func, module: resolvedModule });
   const data = await fetchRpc<T>(config, resolvedModule, func, args);
   setCache(key, data);
   return data;
