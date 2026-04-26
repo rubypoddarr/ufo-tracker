@@ -3,25 +3,28 @@ import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
-# ---------------- INIT APP ----------------
+# ---------------- APP INIT ----------------
 app = Flask(__name__)
 CORS(app)
 
-# ---------------- DB PATH (FIXED FOR DEPLOYMENT) ----------------
+# ---------------- DB PATH (SAFE FOR DEPLOYMENT) ----------------
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DB_PATH = os.path.join(BASE_DIR, "data/db/ufo_sightings.db")
 
 
 # ---------------- DB CONNECTION ----------------
-def _get_db():
+def get_db():
+    if not os.path.exists(DB_PATH):
+        raise FileNotFoundError(f"DB not found at {DB_PATH}")
+
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     return conn
 
 
-# ---------------- CORE FUNCTIONS ----------------
+# ---------------- CORE LOGIC ----------------
 def get_sightings(filters=None, limit=1000):
-    conn = _get_db()
+    conn = get_db()
     try:
         query = "SELECT * FROM sightings WHERE 1=1"
         params = []
@@ -58,7 +61,7 @@ def get_sightings(filters=None, limit=1000):
 
 
 def get_filter_options():
-    conn = _get_db()
+    conn = get_db()
     try:
         years = [r["year"] for r in conn.execute(
             "SELECT DISTINCT year FROM sightings WHERE year IS NOT NULL ORDER BY year DESC"
@@ -83,23 +86,23 @@ def get_filter_options():
 
 
 def get_stats():
-    conn = _get_db()
+    conn = get_db()
     try:
         total = conn.execute("SELECT COUNT(*) FROM sightings").fetchone()[0]
 
         top_shape = conn.execute("""
-            SELECT shape FROM sightings 
+            SELECT shape FROM sightings
             WHERE shape IS NOT NULL AND shape != ''
-            GROUP BY shape 
-            ORDER BY COUNT(*) DESC 
+            GROUP BY shape
+            ORDER BY COUNT(*) DESC
             LIMIT 1
         """).fetchone()
 
         top_country = conn.execute("""
-            SELECT country FROM sightings 
+            SELECT country FROM sightings
             WHERE country IS NOT NULL AND country != ''
-            GROUP BY country 
-            ORDER BY COUNT(*) DESC 
+            GROUP BY country
+            ORDER BY COUNT(*) DESC
             LIMIT 1
         """).fetchone()
 
@@ -113,30 +116,31 @@ def get_stats():
         conn.close()
 
 
-# ---------------- RPC ROUTE (THIS IS THE BRAIN) ----------------
+# ---------------- RPC ENDPOINT ----------------
 @app.route("/", methods=["POST"])
 def rpc():
-    data = request.get_json()
-
-    func = data.get("func")
-    args = data.get("args", {})
-
     try:
+        data = request.get_json(force=True)
+
+        func = data.get("func")
+        args = data.get("args", {})
+
         if func == "get_sightings":
             return jsonify(get_sightings(args))
 
-        if func == "get_filter_options":
+        elif func == "get_filter_options":
             return jsonify(get_filter_options())
 
-        if func == "get_stats":
+        elif func == "get_stats":
             return jsonify(get_stats())
 
-        return jsonify({"error": "Unknown function"}), 400
+        return jsonify({"error": "Unknown function", "func": func}), 400
 
     except Exception as e:
+        print("[BACKEND_ERROR]", str(e))
         return jsonify({"error": str(e)}), 500
 
 
-# ---------------- RUN SERVER ----------------
+# ---------------- RUN ----------------
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
