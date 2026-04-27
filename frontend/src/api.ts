@@ -8,7 +8,7 @@ type AppConfig = {
 function getConfig(): AppConfig {
   return {
     appName: "ufo_tracker",
-    dataEndpoint: "https://ufo-tracker-9alh.onrender.com/api", // MUST include /api
+    dataEndpoint: "https://ufo.artizote.com/api",
     runId: ""
   };
 }
